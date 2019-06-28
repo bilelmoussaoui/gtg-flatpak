@@ -19,7 +19,7 @@ flatpak install flathub org.gnome.Platform//3.32
 4 - Clone the repository
 
 ```bash
-git clone --recurse-submodules https://github.com/bilelmoussaoui/gtg-flatpak
+git clone https://github.com/bilelmoussaoui/gtg-flatpak
 cd ./gtg-flatpak
 ``` 
 
