@@ -34,12 +34,85 @@
     "*.pyc",
     "*.pyo"
   ],
-  "modules": [{
+  "modules": [
+    "shared-modules/gtk2/gtk2.json",
+    {
+      "name": "gconf",
+      "cleanup": [
+        "/libexec",
+        "/share/sgml",
+        "/etc/xdg/autostart",
+        "/share/dbus-1"
+      ],
+      "config-opts": [
+        "--disable-static",
+        "--disable-gtk-doc",
+        "--disable-orbit",
+        "--disable-introspection"
+      ],
+      "sources": [{
+        "type": "archive",
+        "url": "https://download.gnome.org/sources/GConf/3.2/GConf-3.2.6.tar.xz",
+        "sha256": "1912b91803ab09a5eed34d364bf09fe3a2a9c96751fde03a4e0cfa51a04d784c"
+      }]
+    },
+    {
+      "name": "pygtk",
+      "sources": [{
+          "type": "archive",
+          "url": "https://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.gz",
+          "sha256": "6e3e54fa6e65a69ac60bd58cb2e60a57f3346ac52efe995f3d10b6c38c972fd8"
+        },
+        {
+          "type": "shell",
+          "commands": ["cp -p /usr/share/automake-*/config.{sub,guess} ."]
+        }
+      ],
+      "modules": [{
+          "name": "python2-pycairo",
+          "rm-configure": true,
+          "sources": [{
+              "type": "archive",
+              "url": "http://cairographics.org/releases/py2cairo-1.10.0.tar.bz2",
+              "sha256": "d30439f06c2ec1a39e27464c6c828b6eface3b22ee17b2de05dc409e429a7431"
+            },
+            {
+              "type": "script",
+              "commands": [
+                "libtoolize --force",
+                "aclocal",
+                "autoheader",
+                "automake --force-missing --add-missing --foreign",
+                "autoconf"
+              ],
+              "dest-filename": "autogen.sh"
+            }
+          ]
+        },
+        {
+          "name": "pygobject",
+          "config-opts": ["--disable-introspection"],
+          "cleanup": [
+            "/bin"
+          ],
+          "sources": [{
+              "type": "archive",
+              "url": "https://ftp.acc.umu.se/pub/GNOME/sources/pygobject/2.21/pygobject-2.21.5.tar.gz",
+              "sha256": "5be816798ee2a35037474e5186af7d04e9dc2b8d502c99443d359b883f026767"
+            },
+            {
+              "type": "shell",
+              "commands": ["cp -p /usr/share/automake-*/config.{sub,guess} ."]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "python-dbus",
-
       "buildsystem": "simple",
       "build-commands": [
-        "pip3 install --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} dbus-python"
+        "pip2 install --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} dbus-python"
       ],
       "sources": [{
         "type": "file",
@@ -51,40 +124,326 @@
       "name": "python3-pyxdg",
       "buildsystem": "simple",
       "build-commands": [
-        "pip3 install --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} pyxdg"
+        "pip2 install --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} pyxdg"
       ],
       "sources": [{
         "type": "file",
         "url": "https://files.pythonhosted.org/packages/47/6e/311d5f22e2b76381719b5d0c6e9dc39cd33999adae67db71d7279a6d70f4/pyxdg-0.26.tar.gz",
         "sha256": "fe2928d3f532ed32b39c32a482b54136fe766d19936afc96c8f00645f9da1a06"
       }]
+    }, {
+      "name": "launchpadlib",
+      "buildsystem": "simple",
+      "build-commands": [
+        "python2 setup.py install --prefix /app"
+      ],
+      "ensure-writable": [
+        "/lib/python*/site-packages/easy-install.pth",
+        "/lib/python*/site-packages/setuptools.pth",
+        "/app/lib/python*/site-packages/easy-install.pth",
+        "/app/lib/python*/site-packages/setuptools.pth"
+      ],
+      "sources": [{
+        "type": "archive",
+        "url": "https://launchpad.net/launchpadlib/trunk/1.10.7/+download/launchpadlib-1.10.7.tar.gz",
+        "sha256": "692b8d77057b5931c88ab37480f41fd9cd42a1ff10b0618e4455a42372abf8e1"
+      }],
+      "modules": [
+
+        {
+          "name": "lazr.uri",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/ea/bf/71ad2f5eaf7885d36e3cbd0a87cf3812ad043cf99c9fa6cc6ab4c94ee862/lazr.uri-1.0.3.tar.gz",
+            "sha256": "5c620b5993c8c6a73084176bfc51de64972b8373620476ed841931a49752dc8b"
+          }]
+
+        }, {
+          "name": "wadllib",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/e6/21/8194d85e898b2d8c3120a8c0dfb86125c194a725cc2189363fa6f96708c2/wadllib-1.3.3.tar.gz",
+            "sha256": "1234cfe81e2cf223e56816f86df3aa18801d1770261865d93337b8b603be366e"
+          }]
+        },
+        {
+          "name": "pbr",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/81/80/1df9176f9021c588155d0c7a86f1e963cec77fefa31934bc380acb0dbd5e/pbr-5.4.2.tar.gz",
+            "sha256": "9b321c204a88d8ab5082699469f52cc94c5da45c51f114113d01b3d993c24cdf"
+          }]
+        },
+        {
+          "name": "testresources",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/9d/57/8e3986cd95a80dd23195f599befa023eb85d031d2d870c47124fa5ccbf06/testresources-2.0.1.tar.gz",
+            "sha256": "ee9d1982154a1e212d4e4bac6b610800bfb558e4fb853572a827bc14a96e4417"
+          }]
+        },
+        {
+          "name": "httplib2",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/78/23/bb9606e87a66fd8c72a2b1a75b049d3859a122bc2648915be845bc44e04f/httplib2-0.13.1.tar.gz",
+            "sha256": "6901c8c0ffcf721f9ce270ad86da37bc2b4d32b8802d4a9cec38274898a64044"
+          }]
+        },
+        {
+          "name": "six",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/dd/bf/4138e7bfb757de47d1f4b6994648ec67a51efe58fa907c1e11e350cddfca/six-1.12.0.tar.gz",
+            "sha256": "d16a0141ec1a18405cd4ce8b4613101da75da0e9a7aec5bdd4fa804d0e0eba73"
+          }]
+        },
+        {
+          "name": "oauthlib",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/fc/c7/829c73c64d3749da7811c06319458e47f3461944da9d98bb4df1cb1598c2/oauthlib-3.1.0.tar.gz",
+            "sha256": "bee41cc35fcca6e988463cacc3bcb8a96224f470ca547e697b604cc697b2f889"
+          }]
+        },
+        {
+          "name": "distro",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/ca/e3/78443d739d7efeea86cbbe0216511d29b2f5ca8dbf51a6f2898432738987/distro-1.4.0.tar.gz",
+            "sha256": "362dde65d846d23baee4b5c058c8586f219b5a54be1cf5fc6ff55c4578392f57"
+          }]
+        },
+        {
+          "name": "lazr.restfulclient",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/0f/32/aa9a79f4402977950228ec36bfaf4b25cf3cb3bc3b6877f5cbcb43761bda/lazr.restfulclient-0.14.2.tar.gz",
+            "sha256": "1ee3acf3bb38861546251f2f158a5e5df403d93b4b040b08c3f297e24b3a035a"
+          }]
+        },
+        {
+          "name": "setuptools-scm",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/83/44/53cad68ce686585d12222e6769682c4bdb9686808d2739671f9175e2938b/setuptools_scm-3.3.3.tar.gz",
+            "sha256": "bd25e1fb5e4d603dcf490f1fde40fb4c595b357795674c3e5cb7f6217ab39ea5"
+          }]
+        },
+        {
+          "name": "entrypoints",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/b4/ef/063484f1f9ba3081e920ec9972c96664e2edb9fdc3d8669b0e3b8fc0ad7c/entrypoints-0.3.tar.gz",
+            "sha256": "c70dd71abe5a8c85e55e12c19bd91ccfeec11a6e99044204511f9ed547d48451"
+          }]
+        },
+        {
+          "name": "keyring",
+          "buildsystem": "simple",
+          "build-commands": [
+            "python2 setup.py install --prefix /app"
+          ],
+          "ensure-writable": [
+            "/lib/python*/site-packages/easy-install.pth",
+            "/lib/python*/site-packages/setuptools.pth",
+            "/app/lib/python*/site-packages/easy-install.pth",
+            "/app/lib/python*/site-packages/setuptools.pth"
+          ],
+          "sources": [{
+            "type": "archive",
+            "url": "https://files.pythonhosted.org/packages/69/91/5a9d1769ed7e25083649e87977686423aebed3516112557f4cafd73c9f95/keyring-19.0.2.tar.gz",
+            "sha256": "1b74595f7439e4581a11d4f9a12790ac34addce64ca389c86272ff465f5e0b90"
+          }]
+        }
+      ]
     },
     {
       "name": "liblarch",
       "buildsystem": "simple",
       "build-commands": [
-        "python3 setup.py install --prefix /app"
+        "python2 setup.py install --prefix /app"
       ],
       "sources": [{
-        "type": "git",
-        "url": "https://github.com/getting-things-gnome/liblarch",
-        "commit": "ebd05dde26ce8dce2ab181d78bab64750e84a04c"
+        "type": "archive",
+        "url": "https://github.com/getting-things-gnome/liblarch/archive/v2.1.tar.gz",
+        "sha256": "2b1bb070f114be3f306d2b40814bc270ea0996eb6f468f004eb114c2e1611e1d"
+      }]
+    },
+    {
+      "name": "pynotify",
+      "buildsystem": "simple",
+      "build-commands": [
+        "python2 setup.py install --prefix /app"
+      ],
+      "ensure-writable": [
+        "/lib/python*/site-packages/easy-install.pth",
+        "/lib/python*/site-packages/setuptools.pth",
+        "/app/lib/python*/site-packages/easy-install.pth",
+        "/app/lib/python*/site-packages/setuptools.pth"
+      ],
+      "sources": [{
+        "type": "archive",
+        "url": "https://files.pythonhosted.org/packages/77/bb/d9b47ff289b4a470ca3b8aa75474b7551c269caa16b5375a934983db3e5a/pynotify-0.1.1.tar.gz",
+        "sha256": "f14c485bd1bd861666e6fae94ef58b65b83b430a1617e226a6cef2120a911503"
+      }]
+    },
+    {
+      "name": "dateutil",
+      "buildsystem": "simple",
+      "build-commands": [
+        "python2 setup.py install --prefix /app"
+      ],
+      "ensure-writable": [
+        "/lib/python*/site-packages/easy-install.pth",
+        "/lib/python*/site-packages/setuptools.pth",
+        "/app/lib/python*/site-packages/easy-install.pth",
+        "/app/lib/python*/site-packages/setuptools.pth"
+      ],
+      "sources": [{
+        "type": "archive",
+        "url": "https://files.pythonhosted.org/packages/ad/99/5b2e99737edeb28c71bcbec5b5dda19d0d9ef3ca3e92e3e925e7c0bb364c/python-dateutil-2.8.0.tar.gz",
+        "sha256": "c89805f6f4d64db21ed966fda138f8a5ed7a4fdbc1a8ee329ce1b74e3c74da9e"
+      }]
+    },
+    {
+      "name": "suds",
+      "buildsystem": "simple",
+      "build-commands": [
+        "python2 setup.py install --prefix /app"
+      ],
+      "ensure-writable": [
+        "/lib/python*/site-packages/easy-install.pth",
+        "/lib/python*/site-packages/setuptools.pth",
+        "/app/lib/python*/site-packages/easy-install.pth",
+        "/app/lib/python*/site-packages/setuptools.pth"
+      ],
+      "sources": [{
+        "type": "archive",
+        "url": "https://files.pythonhosted.org/packages/bc/d6/960acce47ee6f096345fe5a7d9be7708135fd1d0713571836f073efc7393/suds-0.4.tar.gz",
+        "sha256": "d5524ae523bb9e09c57bcdbd1efae2c287d20603688ea31f6020ed180a489af0"
       }]
     },
     {
       "name": "gtg",
       "buildsystem": "simple",
       "build-commands": [
-        "python3 setup.py install --prefix /app"
+        "python2 setup.py install --prefix /app"
       ],
       "sources": [{
-        "type": "git",
-        "url": "https://github.com/getting-things-gnome/gtg.git",
-        "commit": "117bd7b4bdfcd4805bdc3222ee4b3fc2b10ee0ff"
-      },
-      {
-        "type": "patch",
-        "path": "network_manager.patch"
+        "type": "archive",
+        "url": "https://github.com/getting-things-gnome/gtg/archive/v0.3.1.tar.gz",
+        "sha256": "d6048fc0fcb7786dd71d450a2572d3fcddcfd94b8b81d53a16b457fa0b32069f"
       }]
     }
   ]
